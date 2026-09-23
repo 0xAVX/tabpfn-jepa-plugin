@@ -4,7 +4,7 @@
 > — not a separate submission.** The encoder, relevance ranking and selection
 > results live on there with fixed training and a seed-protocol evaluation.
 
-Prototype: the first **self-supervised plugin for frozen TabPFN-3.5**.
+Prototype: a **self-supervised plugin for frozen TabPFN-3.5**.
 A tiny per-dataset JEPA encoder (mask-predict in latent space, no labels, no
 augmentations — after T-JEPA, Thimonier et al. 2024; predictive-core framing
 after Gen-Verse/JEPA-Anything) gives TabPFN two things it lacks:
@@ -44,4 +44,5 @@ wide-data triage, and the entry reports both.
 - T-JEPA: augmentation-free SSL for tabular (2410.05016) — our encoder lineage.
 - TabTune (2511.02802): fine-tunes tabular FMs — we keep the FM frozen instead.
 - JEPA-Anything (Gen-Verse, arXiv:2609.20800): factorized predictive core framing.
-- No published work plugs JEPA-style SSL into TabPFN — that gap is this entry.
+- No published work plugs JEPA-style SSL into TabPFN — that gap motivated
+  this prototype and the merged JEPA-PFN project.
