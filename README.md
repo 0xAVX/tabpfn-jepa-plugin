@@ -4,7 +4,7 @@
 > — not a separate submission.** The encoder, relevance ranking and selection
 > results live on there with fixed training and a seed-protocol evaluation.
 
-Hackathon entry: the first **self-supervised plugin for frozen TabPFN-3.5**.
+Prototype: the first **self-supervised plugin for frozen TabPFN-3.5**.
 A tiny per-dataset JEPA encoder (mask-predict in latent space, no labels, no
 augmentations — after T-JEPA, Thimonier et al. 2024; predictive-core framing
 after Gen-Verse/JEPA-Anything) gives TabPFN two things it lacks:
