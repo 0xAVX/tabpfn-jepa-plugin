@@ -53,11 +53,12 @@ def main():
     Xtr, Xte, ytr, yte = train_test_split(Xn, yn, test_size=0.25, stratify=yn,
                                            random_state=SEED)
     t = prep_fit(pd.DataFrame(Xtr, columns=Xn.columns))
-    Xp, cols = prep_apply(pd.DataFrame(Xn, columns=Xn.columns), t)
-    net, dev = train_plug(Xp, epochs=15, verbose=True)
-    rel = relevance(net, dev, Xp)
+    Xp_tr, cols = prep_apply(pd.DataFrame(Xtr, columns=Xn.columns), t)
+    net, dev = train_plug(Xp_tr, epochs=15, verbose=True)
+    rel = relevance(net, dev, Xp_tr)
     order = np.argsort(-rel)
     print("top8:", [cols[i] for i in order[:8]], flush=True)
+    print("(inductive: JEPA fit + relevance on Xtr only; Xte unseen)", flush=True)
     k = 24
     rk = rng.choice(len(cols), k, replace=False)
     for name, idx in [("all86", None), ("jepa24", order[:k]), ("random24", rk)]:
@@ -69,8 +70,8 @@ def main():
 
     print("== D. arch ablation: depth x mask -> top-24 AUC ==", flush=True)
     for depth, mr in [(1, 0.4), (2, 0.4), (3, 0.4), (2, 0.6)]:
-        n2, d2 = train_plug(Xp, epochs=8, depth=depth, mask_ratio=mr)
-        o2 = np.argsort(-relevance(n2, d2, Xp, mask_ratio=mr))
+        n2, d2 = train_plug(Xp_tr, epochs=8, depth=depth, mask_ratio=mr)
+        o2 = np.argsort(-relevance(n2, d2, Xp_tr, mask_ratio=mr))
         p = tabpfn_predict_proba(Xtr.iloc[:, o2[:k]], ytr, Xte.iloc[:, o2[:k]],
                                  seed=SEED)
         a = roc_auc_score(yte, p)
@@ -86,11 +87,13 @@ def main():
     _, Xv, _, yv = train_test_split(rest, rest_y, test_size=10_000,
                                     stratify=rest_y, random_state=1)
     t2 = prep_fit(Xs)
-    Xp2, cols2 = prep_apply(X, t2)
-    net2, dev2 = train_plug(Xp2, epochs=5)
-    rel2 = relevance(net2, dev2, Xp2)
+    Xp2tr, cols2 = prep_apply(Xs, t2)
+    net2, dev2 = train_plug(Xp2tr, epochs=5)
+    rel2 = relevance(net2, dev2, Xp2tr)
     order2 = np.argsort(-rel2)
     print("s6e9 top6:", [cols2[i] for i in order2[:6]], flush=True)
+    print("(inductive: JEPA fit + relevance on train ctx only)", flush=True)
+    Xp2, _ = prep_apply(X, t2)
 
     a_raw = roc_auc_score(yv, tabpfn_predict_proba(Xs, ys, Xv, seed=SEED))
     rows.append(("s6e9-augment", "raw", a_raw))
